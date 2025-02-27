@@ -17,17 +17,23 @@ def optimize_per_person_funding_enum(database, total_funding, base_funding, unin
     df = pd.DataFrame(database)
     x = df["people_served"].values
     y = df["incentive"].values
-
+    
+    # Implement Per Center Caps
+    caps_i = df["per_center_cap"].values if "per_center_cap" in df.columns else np.zeros(len(df))
+    caps_i = np.where(caps_i == 0, 1000000000000, caps_i)  # Replace NaN with a large number
     # If a user doesn't supply a cap, Streamlit sends a 0 value. We set it to a large number in this case.
     if cap == 0:
         cap = 1000000000000  # Set cap to a large number if 0
-        
+
+    # Take the minimum of a per_center_cap and the global cap
+    caps = np.minimum(caps_i, cap)
+
     pp_values = np.linspace(0, 2000, 200001)
     best_pp = None
     min_funding_gap = float("inf")
 
     for PP in pp_values:
-        funding_per_center = np.minimum(base_funding + unincorporated_funding * y + PP * x, cap)
+        funding_per_center = np.minimum(base_funding + unincorporated_funding * y + PP * x, caps)
         total_funding_used = np.sum(funding_per_center)
         funding_gap = abs(total_funding - total_funding_used)
 
@@ -38,6 +44,10 @@ def optimize_per_person_funding_enum(database, total_funding, base_funding, unin
 
     df["per_person_rate"] = best_pp
     df["per_center_funding"] = best_funding_per_center
+    df['Total Funding Provided'] = total_funding
+    df['Base Funding Provided'] = base_funding
+    df['Unincorporated Center Additional Funding Provided'] = unincorporated_funding
+    df['Global Maximum Funding per Center'] = cap
 
     return df, best_pp
 
@@ -101,6 +111,8 @@ st.write("Funding Formula With Caps:")
 st.write("- The CSV must have columns: 'people_served' and 'incentive'.")
 st.write("- To enable charting, 'program_name' and 'past_funding' columns must be provided.")
 st.write("- All columns except 'program_name' must be numeric.")
+st.write("If you do not want to use a cap, either global or per center, set the cap to 0.")
+st.write("The CSV cannot have missing values")
 st.write("Refer to the following documentation for more details:")
 with open("FundingFormulaWithCaps.pdf", "rb") as pdf_file:
     st.download_button(label="Download Documentation", data=pdf_file, file_name="FundingFormulaWithCaps.pdf", mime="application/pdf")

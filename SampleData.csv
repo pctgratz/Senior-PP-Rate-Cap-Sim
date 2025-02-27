@@ -1,11 +1,11 @@
-﻿program_name,people_served,incentive,past_funding
-City of Bonney Lake,244,0,17068.5
-City of Buckley,0,0,0
-Greater Gig Harbor Foundation,114,0,23306.25
-Graham-Kapowsin Community Council,99,1,33215.25
-Key Peninsula Community Services,147,1,68893.5
-City of Lakewood,803,0,19499.25
-Mid-County Community Center,0,1,0
-Orting Senior Center,0,0,0
-Pt. Defiance-Ruston,694,0,43318.5
-The Mustard Seed Project,44,1,75059.25
+﻿program_name,people_served,incentive,past_funding,per_center_cap
+City of Bonney Lake,244,0,17068.5,25602.75
+City of Buckley,0,0,0,0
+Greater Gig Harbor Foundation,114,0,23306.25,34959.375
+Graham-Kapowsin Community Council,99,1,33215.25,49822.875
+Key Peninsula Community Services,147,1,68893.5,103340.25
+City of Lakewood,803,0,19499.25,29248.875
+Mid-County Community Center,0,1,0,0
+Orting Senior Center,0,0,0,0
+Pt. Defiance-Ruston,694,0,43318.5,64977.75
+The Mustard Seed Project,44,1,75059.25,112588.875
