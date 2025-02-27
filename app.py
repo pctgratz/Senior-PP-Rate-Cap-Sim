@@ -18,6 +18,10 @@ def optimize_per_person_funding_enum(database, total_funding, base_funding, unin
     x = df["people_served"].values
     y = df["incentive"].values
 
+    # If a user doesn't supply a cap, Streamlit sends a 0 value. We set it to a large number in this case.
+    if cap == 0:
+        cap = 1000000000000  # Set cap to a large number if 0
+        
     pp_values = np.linspace(0, 2000, 200001)
     best_pp = None
     min_funding_gap = float("inf")
