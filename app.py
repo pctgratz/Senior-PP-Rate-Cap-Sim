@@ -147,9 +147,10 @@ st.write("""
 st.subheader("Important Considerations")
 st.write("""
 1. **Comparing Total Funding with Past Funding**:
-   - The total funding parameter should be comparable to past funding only if the time scales are the same.
+   - The total funding parameter should be comparable to past funding only if the time scales are the same, that is, the time to spend the total funding is similar to the length of time for which past funding was spent
     - The per-center funding will be comparable to past per-center funding only if the total funding is similar, within a 10% margin, of the sum of past funding.
    - If the sum of the capped values is less than the total funds, all centers will receive their cap value.
+    - If the tool is used for setting future rates, ensure that the number of people served in the data is representative of the future number of people served. For example, if the number of people served historically was derived from 6 months of service, but future applications are for 12 months of service, the per-person rate will not generalize to recreate the total funding. In this example, you cannot simply half the per-person rate. Similarly, if more Centers apply in the future than were used to generate the historical rate, then the per-person rate will likely be too high to recreate the total funding.
 
 2. **Optimization Constraints**:
    - The optimization process aims to distribute the total funding while respecting the caps and other constraints.
