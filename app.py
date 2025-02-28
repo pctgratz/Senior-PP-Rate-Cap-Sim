@@ -109,8 +109,6 @@ if st.button("Run Optimization"):
 
 # Documentation Section
 st.header("Documentation")
-# Documentation Section
-st.header("Documentation")
 
 st.subheader("Understanding the Parameters")
 st.write("""
@@ -155,15 +153,15 @@ st.write("""
 
 2. **Optimization Constraints**:
    - The optimization process aims to distribute the total funding while respecting the caps and other constraints.
-   - If the best per-person rate is set to the maximum value ($4,000), it indicates that the optimization may not be feasible with the given constraints.
+   - If the best per-person rate is set to the maximum value (\$4,000), it indicates that the optimization may not be feasible with the given constraints.
 """)
 
 st.subheader("Example Scenario")
 st.write("""
-- If you have a total funding of $100,000, a base funding of $1,000 per center, and an additional funding of $500 for unincorporated centers, with a cap of $10,000 per center:
-  - Each center will receive at least $1,000.
-  - Unincorporated centers will receive an additional $500.
-  - No center will receive more than $10,000.
+- If you have a total funding of \$100,000, a base funding of \$1,000 per center, and an additional funding of \$500 for unincorporated centers, with a cap of \$10,000 per center:
+  - Each center will receive at least \$1,000.
+  - Unincorporated centers will receive an additional \$500.
+  - No center will receive more than \$10,000.
 """)
 
 st.subheader("Downloading Results")
