@@ -28,7 +28,7 @@ def optimize_per_person_funding_enum(database, total_funding, base_funding, unin
     # Take the minimum of a per_center_cap and the global cap
     caps = np.minimum(caps_i, cap)
 
-    pp_values = np.linspace(0, 2000, 200001)
+    pp_values = np.linspace(0, 4000, 400001)
     best_pp = None
     min_funding_gap = float("inf")
 
@@ -37,9 +37,9 @@ def optimize_per_person_funding_enum(database, total_funding, base_funding, unin
         total_funding_used = np.sum(funding_per_center)
         funding_gap = abs(total_funding - total_funding_used)
 
-        if funding_gap < min_funding_gap:
+        if funding_gap < (min_funding_gap-.01): # Add a small buffer to avoid floating point errors
             min_funding_gap = funding_gap
-            best_pp = PP
+            best_pp = round(PP,2)
             best_funding_per_center = funding_per_center.copy()
 
     df["per_person_rate"] = best_pp
@@ -73,6 +73,9 @@ if st.button("Run Optimization"):
             optimized_df, best_pp = optimize_per_person_funding_enum(df.to_dict(orient="records"), total_funding, base_funding, unincorporated_funding, cap)
             st.success(f"Optimization successful! Best per-person rate: ${best_pp:.2f}")
             st.write(f"**Best Per Person Rate:** ${best_pp:.2f}")
+            # Warning if Per Person Rate is set to the maximum value: $4,000
+            if best_pp >= 3999.99:
+                st.warning("The maximum allowable per person rate in this simulation is $4,000. The optimization may not be feasible with the given constraints.")
 
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_filename = f"optimized_{timestamp}.csv"
@@ -106,13 +109,69 @@ if st.button("Run Optimization"):
 
 # Documentation Section
 st.header("Documentation")
-st.write("Refer to the following documentation for more details:")
-st.write("Funding Formula With Caps:")
-st.write("- The CSV must have columns: 'people_served' and 'incentive'.")
-st.write("- To enable charting, 'program_name' and 'past_funding' columns must be provided.")
-st.write("- All columns except 'program_name' must be numeric.")
-st.write("If you do not want to use a cap, either global or per center, set the cap to 0.")
-st.write("The CSV cannot have missing values")
+# Documentation Section
+st.header("Documentation")
+
+st.subheader("Understanding the Parameters")
+st.write("""
+1. **Total Funding ($)**:
+   - This is the total amount of money available for distribution among all centers.
+   - Ensure that this value is comparable to past funding if you are using historical data for comparison.
+
+2. **Base Funding per Center ($)**:
+   - This is the fixed amount of money each center will receive regardless of other factors.
+   - Set this to 0 if there is no base funding.
+
+3. **Unincorporated Center Additional Funding ($)**:
+   - Additional funding provided to centers that are unincorporated.
+   - Set this to 0 if there is no additional funding for unincorporated centers.
+
+4. **Maximum Funding per Center ($)**:
+   - This is the cap on the maximum amount of funding any single center can receive.
+   - If you do not want to use a cap, set this value to 0.
+""")
+
+st.subheader("Preparing Your CSV File")
+st.write("""
+1. **Required Columns**:
+   - The CSV file must contain the following columns:
+     - `people_served`: Number of people served by each center.
+     - `incentive`: Incentive value for each center.
+   - Optional columns for additional features:
+     - `program_name`: Name of the program or center.
+     - `past_funding`: Historical funding received by each center.
+
+2. **Data Integrity**:
+   - Ensure there are no missing values in the CSV file.
+   - All columns except `program_name` must contain numeric values.
+""")
+
+st.subheader("Important Considerations")
+st.write("""
+1. **Comparing Total Funding with Past Funding**:
+   - The total funding parameter should be comparable to past funding only if the time scales are the same.
+    - The per-center funding will be comparable to past per-center funding only if the total funding is similar, within a 10% margin, of the sum of past funding.
+   - If the sum of the capped values is less than the total funds, all centers will receive their cap value.
+
+2. **Optimization Constraints**:
+   - The optimization process aims to distribute the total funding while respecting the caps and other constraints.
+   - If the best per-person rate is set to the maximum value ($4,000), it indicates that the optimization may not be feasible with the given constraints.
+""")
+
+st.subheader("Example Scenario")
+st.write("""
+- If you have a total funding of $100,000, a base funding of $1,000 per center, and an additional funding of $500 for unincorporated centers, with a cap of $10,000 per center:
+  - Each center will receive at least $1,000.
+  - Unincorporated centers will receive an additional $500.
+  - No center will receive more than $10,000.
+""")
+
+st.subheader("Downloading Results")
+st.write("""
+- After running the optimization, you can download the optimized CSV file with the results.
+- The file will contain the optimized funding distribution for each center, the per-person rate, and the initial parameters submitted.
+""")
+
 st.write("Refer to the following documentation for more details:")
 with open("FundingFormulaWithCaps.pdf", "rb") as pdf_file:
     st.download_button(label="Download Documentation", data=pdf_file, file_name="FundingFormulaWithCaps.pdf", mime="application/pdf")
